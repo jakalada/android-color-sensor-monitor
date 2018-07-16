@@ -1,7 +1,8 @@
-package net.jakalada.colorsensormonitor
+package net.jakalada.colorsensormonitor.activity.main
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import net.jakalada.colorsensormonitor.R
 
 class MainActivity : AppCompatActivity() {
 
