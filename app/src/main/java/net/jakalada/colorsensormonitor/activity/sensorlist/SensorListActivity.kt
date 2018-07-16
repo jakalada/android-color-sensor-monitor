@@ -1,10 +1,17 @@
 package net.jakalada.colorsensormonitor.activity.sensorlist
 
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothManager
+import android.bluetooth.le.*
 import android.content.Context
+import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.ParcelUuid
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,15 +19,24 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_sensor_list.*
 import kotlinx.android.synthetic.main.list_sensor_item.view.*
 import net.jakalada.colorsensormonitor.R
+import net.jakalada.colorsensormonitor.ble.ColorSensor
 
 class SensorListActivity : AppCompatActivity() {
 
-    private lateinit var registeredAdapter: SensorListAdapter
-    private lateinit var unregisteredAdapter: SensorListAdapter
+    private lateinit var bluetoothAdapter : BluetoothAdapter
+    private lateinit var bluetoothLeScanner: BluetoothLeScanner
+    private lateinit var registeredAdapter : SensorListAdapter
+    private lateinit var unregisteredAdapter : SensorListAdapter
+
+    private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sensor_list)
+
+        val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
+        bluetoothAdapter = bluetoothManager.adapter
+        bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
 
         initRegisteredSensorList();
         initUnregisteredSensorList();
@@ -30,12 +46,8 @@ class SensorListActivity : AppCompatActivity() {
     private fun initRegisteredSensorList() {
         // RecycleViewのアダプターを作成
         registeredAdapter = SensorListAdapter(this, {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            unregisterSensor(it)
         })
-
-        // 仮データを追加
-        registeredAdapter.addSensorName("0001")
-        registeredAdapter.addSensorName("0003")
 
         // RecycleViewにアダプターを設定
         registeredSensorList.adapter = registeredAdapter
@@ -49,12 +61,8 @@ class SensorListActivity : AppCompatActivity() {
     private fun initUnregisteredSensorList() {
         // RecycleViewのアダプターを作成
         unregisteredAdapter = SensorListAdapter(this, {
-            Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
+            registerSensor(it)
         })
-
-        // 仮データを追加
-        unregisteredAdapter.addSensorName("0002")
-        unregisteredAdapter.addSensorName("0004")
 
         // RecycleViewにアダプターを設定
         unregisteredSensorList.adapter = unregisteredAdapter
@@ -70,19 +78,67 @@ class SensorListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-
-        registeredSensorList.postDelayed({
-            registeredAdapter.addSensorName("0002")
-            unregisteredAdapter.removeSensorName("0002")
-        }, 5000)
+        startScan()
     }
 
     override fun onPause() {
         super.onPause()
+        stopScan()
     }
 
     override fun onStop() {
         super.onStop()
+    }
+
+    private fun startScan() {
+        val filter = ScanFilter.Builder()
+                .setServiceUuid(ParcelUuid(ColorSensor.SERVICE_UUID))
+                .build()
+        val settings = ScanSettings.Builder()
+                .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
+                .build()
+        bluetoothLeScanner.startScan(mutableListOf(filter), settings, colorSensorScanCallback)
+    }
+
+    private fun stopScan() {
+        bluetoothLeScanner.stopScan(colorSensorScanCallback)
+    }
+
+    private fun registerSensor(sensorName: String) {
+        // 「登録済みのセンサー」のリストに追加
+        registeredAdapter.addSensorName(sensorName)
+
+        // 「周囲のセンサー」のリストから削除
+        unregisteredAdapter.removeSensorName(sensorName)
+    }
+
+    private fun unregisterSensor(sensorName: String) {
+        // 「登録済みのセンサー」のリストから削除
+        registeredAdapter.removeSensorName(sensorName)
+    }
+
+    private fun addUnregisteredSensorName(sensorName: String) {
+        // 登録済みの場合は「周囲のセンサー」のリストに追加しない
+        if (registeredAdapter.contains(sensorName)) return
+
+        // 「周囲のセンサー」のリストに追加
+        unregisteredAdapter.addSensorName(sensorName)
+    }
+
+    private val colorSensorScanCallback = object : ScanCallback() {
+        override fun onScanResult(callbackType: Int, result: ScanResult?) {
+            if (result != null) {
+                handler.post({
+                    addUnregisteredSensorName(result.scanRecord.deviceName)
+                })
+            }
+        }
+
+        override fun onBatchScanResults(results: MutableList<ScanResult>?) {
+        }
+
+        override fun onScanFailed(errorCode: Int) {
+        }
     }
 }
 
@@ -147,5 +203,14 @@ class SensorListAdapter(context: Context, private val onItemClicked : (String) -
             sensorList.add(0, sensorName)
             notifyItemInserted(0)
         }
+    }
+
+    /**
+     * センサー名の追加
+     *
+     * @param sensorName 追加するセンサー名(アドバタイズパケットのデバイス名)
+     */
+    fun contains(sensorName : String) : Boolean {
+        return sensorList.contains(sensorName)
     }
 }
