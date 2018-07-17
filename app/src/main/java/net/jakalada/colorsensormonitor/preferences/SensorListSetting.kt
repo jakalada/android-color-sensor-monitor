@@ -2,7 +2,6 @@ package net.jakalada.colorsensormonitor.preferences
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.preference.PreferenceManager
 
 class SensorListSetting(context: Context) {
 

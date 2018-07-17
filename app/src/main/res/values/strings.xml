@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Color Sensor Monitor</string>
+    <string name="unregistered_sensor">周囲のセンサー</string>
+    <string name="registered_sensor">登録済みのセンサー</string>
 </resources>

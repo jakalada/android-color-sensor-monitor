@@ -1,7 +1,6 @@
 package net.jakalada.colorsensormonitor.activity.main
 
 import android.content.Intent
-import android.hardware.Sensor
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import kotlinx.android.synthetic.main.activity_main.*

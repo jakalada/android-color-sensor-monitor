@@ -21,6 +21,7 @@ import net.jakalada.colorsensormonitor.ble.ColorSensor
 import net.jakalada.colorsensormonitor.preferences.SensorListSetting
 import android.content.pm.PackageManager
 import android.support.v4.content.ContextCompat
+import android.widget.TextView
 
 
 class SensorListActivity : AppCompatActivity() {
@@ -43,8 +44,8 @@ class SensorListActivity : AppCompatActivity() {
         bluetoothAdapter = bluetoothManager.adapter
         bluetoothLeScanner = bluetoothAdapter.bluetoothLeScanner
 
-        initRegisteredSensorList();
-        initUnregisteredSensorList();
+        initRegisteredSensorList()
+        initUnregisteredSensorList()
     }
 
     /** 「登録済みのセンサー」のリストの初期化処理 */
@@ -146,9 +147,9 @@ class SensorListActivity : AppCompatActivity() {
     private val colorSensorScanCallback = object : ScanCallback() {
         override fun onScanResult(callbackType: Int, result: ScanResult?) {
             if (result != null) {
-                handler.post({
+                handler.post {
                     addUnregisteredSensorName(result.scanRecord.deviceName)
-                })
+                }
             }
         }
 
@@ -198,7 +199,7 @@ class SensorListAdapter(
     }
 
     class SensorListViewHolder(view : View) : RecyclerView.ViewHolder(view) {
-        val sensorNameTextView = view.sensorNameTextView
+        val sensorNameTextView: TextView = view.sensorNameTextView
     }
 
     /**
