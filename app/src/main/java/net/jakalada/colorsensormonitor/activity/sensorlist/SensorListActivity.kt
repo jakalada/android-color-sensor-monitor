@@ -1,5 +1,6 @@
 package net.jakalada.colorsensormonitor.activity.sensorlist
 
+import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.*
@@ -18,6 +19,9 @@ import kotlinx.android.synthetic.main.list_sensor_item.view.*
 import net.jakalada.colorsensormonitor.R
 import net.jakalada.colorsensormonitor.ble.ColorSensor
 import net.jakalada.colorsensormonitor.preferences.SensorListSetting
+import android.content.pm.PackageManager
+import android.support.v4.content.ContextCompat
+
 
 class SensorListActivity : AppCompatActivity() {
 
@@ -80,7 +84,14 @@ class SensorListActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        startScan()
+
+        if (bluetoothAdapter.isEnabled && ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            startScan()
+        } else {
+            // 許可を求める処理はMainActivityに任せる
+            finish()
+        }
     }
 
     override fun onPause() {
