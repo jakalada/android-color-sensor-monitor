@@ -5,23 +5,23 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.*
 import android.content.Context
-import android.support.v7.app.AppCompatActivity
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.ParcelUuid
+import android.support.v4.content.ContextCompat
+import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_sensor_list.*
 import kotlinx.android.synthetic.main.list_sensor_item.view.*
 import net.jakalada.colorsensormonitor.R
 import net.jakalada.colorsensormonitor.ble.ColorSensor
 import net.jakalada.colorsensormonitor.preferences.SensorListSetting
-import android.content.pm.PackageManager
-import android.support.v4.content.ContextCompat
-import android.widget.TextView
 
 
 class SensorListActivity : AppCompatActivity() {
@@ -163,8 +163,8 @@ class SensorListActivity : AppCompatActivity() {
 
 class SensorListAdapter(
         context: Context,
-        private val onItemClicked : (String) -> Unit,
-        initialSensorList : List<String> = listOf<String>()) :
+        private val onItemClicked: (String) -> Unit,
+        initialSensorList: List<String> = listOf<String>()) :
         RecyclerView.Adapter<SensorListAdapter.SensorListViewHolder>() {
 
     private val inflater = LayoutInflater.from(context)
@@ -198,7 +198,7 @@ class SensorListAdapter(
         holder.sensorNameTextView.text = sensorName
     }
 
-    class SensorListViewHolder(view : View) : RecyclerView.ViewHolder(view) {
+    class SensorListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val sensorNameTextView: TextView = view.sensorNameTextView
     }
 
@@ -207,7 +207,7 @@ class SensorListAdapter(
      *
      * @param sensorName 削除するセンサー名
      */
-    fun removeSensorName(sensorName : String) {
+    fun removeSensorName(sensorName: String) {
         val pos = sensorList.indexOf(sensorName)
         if (pos != -1) {
             sensorList.remove(sensorName)
@@ -220,7 +220,7 @@ class SensorListAdapter(
      *
      * @param sensorName 追加するセンサー名
      */
-    fun addSensorName(sensorName : String) {
+    fun addSensorName(sensorName: String) {
         if (sensorList.contains(sensorName)) return
 
         sensorList.add(sensorName)
@@ -233,7 +233,7 @@ class SensorListAdapter(
      * @param sensorName 追加するセンサー名(アドバタイズパケットのデバイス名)
      * @return 存在する場合はtrue。存在しない場合はfalse
      */
-    fun contains(sensorName : String) : Boolean {
+    fun contains(sensorName: String): Boolean {
         return sensorList.contains(sensorName)
     }
 }
