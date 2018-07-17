@@ -4,35 +4,36 @@ import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothManager
 import android.bluetooth.le.*
 import android.content.Context
-import android.graphics.Color
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.ParcelUuid
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_sensor_list.*
 import kotlinx.android.synthetic.main.list_sensor_item.view.*
 import net.jakalada.colorsensormonitor.R
 import net.jakalada.colorsensormonitor.ble.ColorSensor
+import net.jakalada.colorsensormonitor.preferences.SensorListSetting
 
 class SensorListActivity : AppCompatActivity() {
 
-    private lateinit var bluetoothAdapter : BluetoothAdapter
+    private lateinit var sensorListSetting: SensorListSetting
+    private lateinit var bluetoothAdapter: BluetoothAdapter
     private lateinit var bluetoothLeScanner: BluetoothLeScanner
-    private lateinit var registeredAdapter : SensorListAdapter
-    private lateinit var unregisteredAdapter : SensorListAdapter
+    private lateinit var registeredAdapter: SensorListAdapter
+    private lateinit var unregisteredAdapter: SensorListAdapter
 
     private val handler = Handler()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sensor_list)
+
+        sensorListSetting = SensorListSetting(this)
 
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         bluetoothAdapter = bluetoothManager.adapter
@@ -45,9 +46,10 @@ class SensorListActivity : AppCompatActivity() {
     /** 「登録済みのセンサー」のリストの初期化処理 */
     private fun initRegisteredSensorList() {
         // RecycleViewのアダプターを作成
+        // SharedPreferencesに保存していたセンサー名のリストを初期値として設定
         registeredAdapter = SensorListAdapter(this, {
             unregisterSensor(it)
-        })
+        }, sensorListSetting.list)
 
         // RecycleViewにアダプターを設定
         registeredSensorList.adapter = registeredAdapter
@@ -105,7 +107,10 @@ class SensorListActivity : AppCompatActivity() {
     }
 
     private fun registerSensor(sensorName: String) {
+        if (registeredAdapter.contains(sensorName)) return
+
         // 「登録済みのセンサー」のリストに追加
+        sensorListSetting.addSensor(sensorName)
         registeredAdapter.addSensorName(sensorName)
 
         // 「周囲のセンサー」のリストから削除
@@ -113,12 +118,14 @@ class SensorListActivity : AppCompatActivity() {
     }
 
     private fun unregisterSensor(sensorName: String) {
-        // 「登録済みのセンサー」のリストから削除
+        if (!registeredAdapter.contains(sensorName)) return
+
+        sensorListSetting.removeSensor(sensorName)
         registeredAdapter.removeSensorName(sensorName)
     }
 
     private fun addUnregisteredSensorName(sensorName: String) {
-        // 登録済みの場合は「周囲のセンサー」のリストに追加しない
+        // 登録済みのセンサーの場合は「周囲のセンサー」のリストに追加しない
         if (registeredAdapter.contains(sensorName)) return
 
         // 「周囲のセンサー」のリストに追加
@@ -142,12 +149,15 @@ class SensorListActivity : AppCompatActivity() {
     }
 }
 
-class SensorListAdapter(context: Context, private val onItemClicked : (String) -> Unit) :
+class SensorListAdapter(
+        context: Context,
+        private val onItemClicked : (String) -> Unit,
+        initialSensorList : List<String> = listOf<String>()) :
         RecyclerView.Adapter<SensorListAdapter.SensorListViewHolder>() {
 
     private val inflater = LayoutInflater.from(context)
 
-    private val sensorList = mutableListOf<String>()
+    private val sensorList = initialSensorList.toMutableList()
 
     override fun getItemCount(): Int {
         return sensorList.size
@@ -183,7 +193,7 @@ class SensorListAdapter(context: Context, private val onItemClicked : (String) -
     /**
      * センサー名の削除
      *
-     * @param sensorName 削除するセンサー名(アドバタイズパケットのデバイス名)
+     * @param sensorName 削除するセンサー名
      */
     fun removeSensorName(sensorName : String) {
         val pos = sensorList.indexOf(sensorName)
@@ -196,19 +206,20 @@ class SensorListAdapter(context: Context, private val onItemClicked : (String) -
     /**
      * センサー名の追加
      *
-     * @param sensorName 追加するセンサー名(アドバタイズパケットのデバイス名)
+     * @param sensorName 追加するセンサー名
      */
     fun addSensorName(sensorName : String) {
-        if (!sensorList.contains(sensorName)) {
-            sensorList.add(0, sensorName)
-            notifyItemInserted(0)
-        }
+        if (sensorList.contains(sensorName)) return
+
+        sensorList.add(sensorName)
+        notifyItemInserted(sensorList.size - 1)
     }
 
     /**
-     * センサー名の追加
+     * 指定されたセンサー名が項目として存在するかどうかを判定
      *
      * @param sensorName 追加するセンサー名(アドバタイズパケットのデバイス名)
+     * @return 存在する場合はtrue。存在しない場合はfalse
      */
     fun contains(sensorName : String) : Boolean {
         return sensorList.contains(sensorName)
