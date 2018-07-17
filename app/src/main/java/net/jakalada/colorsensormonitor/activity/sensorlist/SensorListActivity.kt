@@ -23,7 +23,7 @@ import net.jakalada.colorsensormonitor.R
 import net.jakalada.colorsensormonitor.ble.ColorSensor
 import net.jakalada.colorsensormonitor.preferences.SensorListSetting
 
-
+/** センサー登録画面のクラス */
 class SensorListActivity : AppCompatActivity() {
 
     private lateinit var sensorListSetting: SensorListSetting
@@ -105,6 +105,7 @@ class SensorListActivity : AppCompatActivity() {
     }
 
     private fun startScan() {
+        // アドバタイズされているServiceのUUIDで絞り込んでスキャン
         val filter = ScanFilter.Builder()
                 .setServiceUuid(ParcelUuid(ColorSensor.SERVICE_UUID))
                 .build()
@@ -118,6 +119,7 @@ class SensorListActivity : AppCompatActivity() {
         bluetoothLeScanner.stopScan(colorSensorScanCallback)
     }
 
+    /** 「登録済みのセンサー」の項目タッチ時の処理 */
     private fun registerSensor(sensorName: String) {
         if (registeredAdapter.contains(sensorName)) return
 
@@ -129,6 +131,7 @@ class SensorListActivity : AppCompatActivity() {
         unregisteredAdapter.removeSensorName(sensorName)
     }
 
+    /** 「周囲のセンサー」の項目タッチ時の処理 */
     private fun unregisterSensor(sensorName: String) {
         if (!registeredAdapter.contains(sensorName)) return
 
@@ -136,6 +139,7 @@ class SensorListActivity : AppCompatActivity() {
         registeredAdapter.removeSensorName(sensorName)
     }
 
+    /** 検出したセンサーの名前を「周囲のセンサー」のリストに追加する */
     private fun addUnregisteredSensorName(sensorName: String) {
         // 登録済みのセンサーの場合は「周囲のセンサー」のリストに追加しない
         if (registeredAdapter.contains(sensorName)) return
@@ -161,6 +165,13 @@ class SensorListActivity : AppCompatActivity() {
     }
 }
 
+/**
+ * 「登録済みのセンサー」と「周囲のセンサー」で使用するAdapter
+ *
+ * @param context Context
+ * @param onItemClicked 項目がタッチされたときのコールバック
+ * @param initialSensorList 項目の初期値のリスト
+ */
 class SensorListAdapter(
         context: Context,
         private val onItemClicked: (String) -> Unit,

@@ -2,7 +2,7 @@ package net.jakalada.colorsensormonitor.ble
 
 import java.util.*
 
-/** カラーセンサーのクラス */
+/** カラーセンサーのBLE通信のクラス */
 class ColorSensor {
 
     companion object {
