@@ -38,6 +38,8 @@ class SensorListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sensor_list)
 
+        setSupportActionBar(toolbar)
+
         sensorListSetting = SensorListSetting(this)
 
         val bluetoothManager = getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager

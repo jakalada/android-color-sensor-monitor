@@ -13,6 +13,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        setSupportActionBar(toolbar)
+
         sensorListButton.setOnClickListener {
             val intent = Intent(this, SensorListActivity::class.java)
             startActivity(intent)
