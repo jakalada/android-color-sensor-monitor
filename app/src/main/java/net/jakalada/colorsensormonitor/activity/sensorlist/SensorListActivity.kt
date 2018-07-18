@@ -39,6 +39,7 @@ class SensorListActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sensor_list)
 
         setSupportActionBar(toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         sensorListSetting = SensorListSetting(this)
 

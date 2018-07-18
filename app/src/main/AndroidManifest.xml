@@ -25,7 +25,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.sensorlist.SensorListActivity" />
+        <activity
+            android:name=".activity.sensorlist.SensorListActivity"
+            android:parentActivityName=".activity.main.MainActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activity.main.MainActivity"/>
+        </activity>
     </application>
 
 </manifest>
