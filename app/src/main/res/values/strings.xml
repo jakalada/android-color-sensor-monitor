@@ -2,4 +2,6 @@
     <string name="app_name">Color Sensor Monitor</string>
     <string name="unregistered_sensor">周囲のセンサー</string>
     <string name="registered_sensor">登録済みのセンサー</string>
+    <string name="action_sensor_list_setting">センサーの管理</string>
+    <string name="activity_title_sensor_list">センサーの管理</string>
 </resources>

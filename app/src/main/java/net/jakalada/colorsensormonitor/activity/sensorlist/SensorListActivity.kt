@@ -38,7 +38,7 @@ class SensorListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sensor_list)
 
-        toolbar.title = "センサーの管理"
+        toolbar.title = getString(R.string.activity_title_sensor_list)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
