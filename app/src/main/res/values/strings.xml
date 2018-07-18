@@ -4,4 +4,5 @@
     <string name="registered_sensor">登録済みのセンサー</string>
     <string name="action_sensor_list_setting">センサーの管理</string>
     <string name="activity_title_sensor_list">センサーの管理</string>
+    <string name="notice_non_registered_sensor">センサーを登録してください</string>
 </resources>
