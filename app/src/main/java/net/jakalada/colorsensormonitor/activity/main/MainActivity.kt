@@ -53,15 +53,19 @@ class MainActivity : AppCompatActivity() {
         bluetoothAdapter = bluetoothManager.adapter
 
         sensorListSetting = SensorListSetting(this)
-
-        // センサーの登録状況に応じてレイアウトを変更
-        initColorSensorView()
     }
 
     override fun onStart() {
         super.onStart()
 
         checkAndRequestBluetooth()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        // センサーの登録状況に応じてレイアウトを変更
+        initColorSensorFragment()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -94,7 +98,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun initColorSensorView() {
+    private fun initColorSensorFragment() {
         if (sensorListSetting.list.isEmpty()) {
             // 登録済みのセンサーがない場合は登録を促す
             noticeTextView.visibility = View.VISIBLE
@@ -102,12 +106,15 @@ class MainActivity : AppCompatActivity() {
             // 登録済みのセンサーが存在する場合はセンサーごとに項目を追加する
             noticeTextView.visibility = View.GONE
 
+            val fragmentTransaction = supportFragmentManager.beginTransaction()
+            supportFragmentManager.fragments.forEach {
+                fragmentTransaction.remove(it)
+            }
             sensorListSetting.list.sorted().forEachIndexed { index: Int, deviceName: String ->
-                val fragmentTransaction = supportFragmentManager.beginTransaction()
                 val fragment : Fragment = ColorSensorFragment.newInstance(deviceName, index)
                 fragmentTransaction.add(R.id.colorSensorFragmentLayout, fragment)
-                fragmentTransaction.commit()
             }
+            fragmentTransaction.commit()
         }
     }
 
