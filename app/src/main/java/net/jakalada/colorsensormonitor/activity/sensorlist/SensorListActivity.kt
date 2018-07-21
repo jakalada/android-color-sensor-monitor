@@ -199,10 +199,15 @@ class SensorListAdapter(
 
         // 項目をタップしたときの処理を設定
         view.setOnClickListener {
-            val sensorName = sensorList[viewHolder.adapterPosition]
+            // すでに項目から削除されている場合は処理しない
+            // (連続タップ時に発生する)
+            if (viewHolder.adapterPosition != RecyclerView.NO_POSITION) {
+                // センサーの名前を取得
+                val sensorName = sensorList[viewHolder.adapterPosition]
 
-            // センサーの名前を指定してコールバックを実行
-            onItemClicked(sensorName)
+                // センサーの名前を指定してコールバックを実行
+                onItemClicked(sensorName)
+            }
         }
 
         return viewHolder
