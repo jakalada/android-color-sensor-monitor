@@ -7,4 +7,5 @@
     <string name="notice_non_registered_sensor">センサーを登録してください</string>
     <string name="notice_enable_bluetooth">BluetoothをONにしてください</string>
     <string name="notice_access_coarse_location_permission">ACCESS_COARSE_LOCATIONの権限が必要です</string>
+    <string name="disconnected">Disconnected</string>
 </resources>

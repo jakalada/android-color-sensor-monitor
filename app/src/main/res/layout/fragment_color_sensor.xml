@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="16dp"
-            android:text="Disconnected"
+            android:text="@string/disconnected"
             android:textAppearance="@style/TextAppearance.AppCompat.Body2"
             android:textColor="#f44336"
             app:layout_constraintEnd_toEndOf="parent"

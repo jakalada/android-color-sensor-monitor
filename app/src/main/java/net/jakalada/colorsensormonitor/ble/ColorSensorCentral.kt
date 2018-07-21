@@ -99,7 +99,7 @@ class ColorSensorValue(val value: ByteArray) {
     companion object {
 
         /** カラーセンサーから受信するデータのバイトサイズ */
-        const val VALUE_SIZE: Int = 3
+        private const val VALUE_SIZE: Int = 3
 
         /** カラーセンサーから受信したバイトデータから[ColorSensorValue]を生成するファクトリーメソッド */
         fun newInstance(value: ByteArray): ColorSensorValue? {
@@ -133,7 +133,7 @@ class ColorSensorValue(val value: ByteArray) {
 }
 
 /** カラーセンサーの通信クラス */
-class ColorSensorCentral(context: Context, val deviceName: String, val callback: ColorSensorCallback) {
+class ColorSensorCentral(context: Context, val deviceName: String, callback: ColorSensorCallback) {
 
     /** [ColorSensorCentral]の内部状態 */
     private enum class ColorSensorCentralState {
@@ -166,16 +166,16 @@ class ColorSensorCentral(context: Context, val deviceName: String, val callback:
     /** 接続する */
     fun connect(): Boolean {
         synchronized(lockObject) {
-            when (state) {
+            return when (state) {
                 ColorSensorCentralState.CLOSED -> {
                     startScan()
                     state = ColorSensorCentralState.SCANNING
-                    return true
+                    true
                 }
 
                 ColorSensorCentralState.SCANNING,
                 ColorSensorCentralState.CONNECTING,
-                ColorSensorCentralState.CONNECTED -> return false
+                ColorSensorCentralState.CONNECTED -> false
             }
         }
     }
@@ -211,7 +211,7 @@ class ColorSensorCentral(context: Context, val deviceName: String, val callback:
         bluetoothLeScanner.stopScan(colorSensorScanCallback)
     }
 
-    private fun _connect(device: BluetoothDevice) {
+    private fun connectAfterScan(device: BluetoothDevice) {
         synchronized(lockObject) {
             if (state == ColorSensorCentralState.SCANNING) {
                 val context = weakContext.get()
@@ -257,7 +257,7 @@ class ColorSensorCentral(context: Context, val deviceName: String, val callback:
             if (result != null) {
                 if (result.scanRecord.deviceName == deviceName) {
                     stopScan()
-                    _connect(result.device)
+                    connectAfterScan(result.device)
                 }
             }
         }
@@ -381,9 +381,7 @@ class ColorSensorCentral(context: Context, val deviceName: String, val callback:
             }
 
             val descriptor = characteristic.getDescriptor(ColorSensorPeripheral.CLIENT_CHARACTERISTIC_CONFIG)
-            if (descriptor == null) {
-                return false
-            }
+                    ?: return false
 
             if (!descriptor.setValue(BluetoothGattDescriptor.ENABLE_NOTIFICATION_VALUE)) {
                 return false

@@ -18,10 +18,6 @@ private const val ARG_DEVICE_INDEX = "device_index"
 
 /**
  * カラーセンサーとの通信と受信したデータの表示を行うフラグメント。
- *
- * このフラグメントを含むアクティビティはインタラクションのイベントを制御するために
- * [ColorSensorFragment.OnFragmentInteractionListener] インターフェースを実装する必要があります。
- * to handle interaction events.
  * このフラグメントのインスタンスを生成するときは [ColorSensorFragment.newInstance] を使用してください。
  */
 class ColorSensorFragment : Fragment() {
@@ -32,7 +28,7 @@ class ColorSensorFragment : Fragment() {
          * [Log.i]によるデバッグ出力のフラグ。[Log.d]を使用したいが、
          * 開発機器のMediaPad T3の仕様でDebugレベルのログが出力されないので[Log.i]を使用している。
          */
-        private const val DEBUG: Boolean = true
+        private const val DEBUG: Boolean = false
 
         /** [Fragment.onResume]で開始するセンサーへの接続試行の遅延時間 */
         private const val CONNECITON_DELAY: Long = 5000L
