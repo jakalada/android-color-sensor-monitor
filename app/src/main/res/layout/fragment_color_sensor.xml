@@ -36,6 +36,29 @@
             app:layout_constraintTop_toBottomOf="@+id/deviceNameTextView"
             tools:text="#FF99CC" />
 
+        <TextView
+            android:id="@+id/disconnectedTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Disconnected"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="#f44336"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/errorTextView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+            android:textColor="#f44336"
+            app:layout_constraintBottom_toBottomOf="@+id/colorTextView"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:text="error" />
+
         <android.support.constraint.Guideline
             android:id="@+id/guideline4"
             android:layout_width="wrap_content"
@@ -47,14 +70,30 @@
             android:id="@+id/colorView"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="16dp"
             android:background="#000000"
+            android:visibility="invisible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintDimensionRatio="H,1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ProgressBar
+            android:id="@+id/connectionProgress"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/colorView"
+            app:layout_constraintEnd_toEndOf="@+id/colorView"
+            app:layout_constraintStart_toStartOf="@+id/colorView"
+            app:layout_constraintTop_toTopOf="@+id/colorView" />
     </android.support.constraint.ConstraintLayout>
 </android.support.v7.widget.CardView>
 

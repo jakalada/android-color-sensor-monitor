@@ -20,7 +20,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_sensor_list.*
 import kotlinx.android.synthetic.main.list_sensor_item.view.*
 import net.jakalada.colorsensormonitor.R
-import net.jakalada.colorsensormonitor.ble.ColorSensor
+import net.jakalada.colorsensormonitor.ble.ColorSensorPeripheral
 import net.jakalada.colorsensormonitor.preferences.SensorListSetting
 
 /** センサー登録画面のクラス */
@@ -111,7 +111,7 @@ class SensorListActivity : AppCompatActivity() {
     private fun startScan() {
         // アドバタイズされているServiceのUUIDで絞り込んでスキャン
         val filter = ScanFilter.Builder()
-                .setServiceUuid(ParcelUuid(ColorSensor.SERVICE_UUID))
+                .setServiceUuid(ParcelUuid(ColorSensorPeripheral.SERVICE_UUID))
                 .build()
         val settings = ScanSettings.Builder()
                 .setScanMode(ScanSettings.SCAN_MODE_BALANCED)
